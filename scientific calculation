@@ -226,7 +226,7 @@
       }
       updateDisplay();
     }
-
+  // takıb edın umur
     function appendFunction(func, closing = '', displayValue = null) {
       if (currentInput === '' && calculationHistory.length > 0) {
         currentInput = calculationHistory[calculationHistory.length - 1].result;
@@ -368,7 +368,7 @@
       }, 1000);
     }
 
-    // Klavye desteği
+    // Klavye desteği umur yagmur takıp edın
     document.addEventListener('keydown', function(e) {
       const key = e.key;
       
