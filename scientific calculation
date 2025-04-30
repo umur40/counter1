@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gelişmiş Bilimsel Hesap Makinesi</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .calculator {
+      background-color: #2c3e50;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    #display {
+      width: 100%;
+      height: 80px;
+      font-size: 32px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(236, 240, 241, 0.9);
+      color: #2c3e50;
+      text-align: right;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      height: 60px;
+      font-size: 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .number {
+      background-color: #34495e;
+    }
+
+    .operator {
+      background-color: #3498db;
+    }
+
+    .scientific {
+      background-color: #9b59b6;
+      font-size: 18px;
+    }
+
+    .clear {
+      background-color: #e74c3c;
+    }
+
+    .equals {
+      background-color: #2ecc71;
+      grid-column: span 2;
+    }
+
+    .decimal {
+      background-color: #34495e;
+    }
+
+    .utility {
+      background-color: #f39c12;
+    }
+
+    .history-panel {
+      background: rgba(255, 255, 255, 0.9);
+      color: #2c3e50;
+      border-radius: 12px;
+      padding: 15px;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+
+    .history-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-item {
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .history-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .clear-history {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 480px) {
+      .calculator {
+        padding: 15px;
+      }
+      
+      #display {
+        height: 70px;
+        font-size: 28px;
+      }
+      
+      button {
+        height: 50px;
+        font-size: 18px;
+      }
+      
+      .scientific {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" disabled placeholder="0" />
+    
+    <div class="button-grid">
+      <button class="clear" onclick="clearDisplay()">AC</button>
+      <button class="operator" onclick="appendValue('(')">(</button>
+      <button class="operator" onclick="appendValue(')')">)</button>
+      <button class="operator" onclick="appendValue('/')">÷</button>
+      <button class="operator" onclick="appendValue('*')">×</button>
+
+      <button class="number" onclick="appendValue('7')">7</button>
+      <button class="number" onclick="appendValue('8')">8</button>
+      <button class="number" onclick="appendValue('9')">9</button>
+      <button class="operator" onclick="appendValue('-')">-</button>
+      <button class="scientific" onclick="calculatePercentage()">%</button>
+
+      <button class="number" onclick="appendValue('4')">4</button>
+      <button class="number" onclick="appendValue('5')">5</button>
+      <button class="number" onclick="appendValue('6')">6</button>
+      <button class="operator" onclick="appendValue('+')">+</button>
+      <button class="scientific" onclick="appendFunction('Math.pow(',')','^')">xʸ</button>
+
+      <button class="number" onclick="appendValue('1')">1</button>
+      <button class="number" onclick="appendValue('2')">2</button>
+      <button class="number" onclick="appendValue('3')">3</button>
+      <button class="scientific" onclick="appendFunction('Math.sqrt(',')','√')">√</button>
+      <button class="scientific" onclick="appendFunction('Math.log(',')','ln')">ln</button>
+
+      <button class="number" onclick="appendValue('0')">0</button>
+      <button class="decimal" onclick="appendValue('.')">.</button>
+      <button class="utility" onclick="backspace()">⌫</button>
+      <button class="scientific" onclick="appendFunction('Math.sin(',')','sin')">sin</button>
+      <button class="scientific" onclick="appendFunction('Math.cos(',')','cos')">cos</button>
+
+      <button class="equals" onclick="calculate()">=</button>
+      <button class="utility" onclick="copyResult()">Kopyala</button>
+      <button class="scientific" onclick="appendFunction('Math.tan(',')','tan')">tan</button>
+      <button class="scientific" onclick="appendFunction('Math.PI','π')">π</button>
+      <button class="scientific" onclick="appendFunction('Math.E','e')">e</button>
+    </div>
+
+    <div class="history-panel">
+      <div class="history-title">
+        <span>Hesaplama Geçmişi</span>
+        <button class="clear-history" onclick="clearHistory()">Temizle</button>
+      </div>
+      <div id="history"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentInput = '';
+    let calculationHistory = [];
+    const MAX_HISTORY_ITEMS = 10;
+
+    function appendValue(value) {
+      // Eğer önceki bir sonuç varsa ve operatör girilirse, sonucu yeni işleme taşı
+      if (currentInput === '' && calculationHistory.length > 0 && ['+', '-', '*', '/', '(', '^'].includes(value)) {
+        currentInput = calculationHistory[calculationHistory.length - 1].result + value;
+      } else {
+        currentInput += value;
+      }
+      updateDisplay();
+    }
+
+    function appendFunction(func, closing = '', displayValue = null) {
+      if (currentInput === '' && calculationHistory.length > 0) {
+        currentInput = calculationHistory[calculationHistory.length - 1].result;
+      }
+      
+      currentInput += displayValue ? displayValue : func;
+      if (closing) currentInput += closing;
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      document.getElementById('display').value = currentInput || '0';
+    }
+
+    function clearDisplay() {
+      currentInput = '';
+      updateDisplay();
+    }
+
+    function backspace() {
+      currentInput = currentInput.slice(0, -1);
+      updateDisplay();
+    }
+
+    function calculate() {
+      try {
+        if (!currentInput) return;
+        
+        // Özel matematiksel ifadeleri düzenle
+        let expression = currentInput
+          .replace(/×/g, '*')
+          .replace(/÷/g, '/')
+          .replace(/\^/g, '**')
+          .replace(/√(\d+)/g, 'Math.sqrt($1)')
+          .replace(/(\d+)!/g, 'factorial($1)');
+        
+        // Güvenlik kontrolü
+        if (!/^[0-9+\-*/().,πe! ]+$/.test(expression.replace(/Math\.\w+\(/g, ''))) {
+          throw new Error('Geçersiz ifade');
+        }
+
+        // Özel değerleri değiştir
+        expression = expression.replace(/π/g, 'Math.PI').replace(/e/g, 'Math.E');
+
+        const result = eval(expression);
+        const roundedResult = parseFloat(result.toFixed(10));
+        
+        addToHistory(currentInput, roundedResult);
+        currentInput = roundedResult.toString();
+        updateDisplay();
+      } catch (e) {
+        showError('Hesaplama hatası');
+      }
+    }
+
+    function calculatePercentage() {
+      try {
+        if (!currentInput) return;
+        
+        const parts = currentInput.split(/[\+\-\*\/]/);
+        if (parts.length < 2) return;
+        
+        const lastNumber = parseFloat(parts[parts.length - 1]);
+        const percentage = lastNumber / 100;
+        
+        currentInput = currentInput.replace(new RegExp(lastNumber + '$'), percentage);
+        updateDisplay();
+      } catch (e) {
+        showError('Yüzde hesaplama hatası');
+      }
+    }
+
+    function factorial(n) {
+      if (n < 0) return NaN;
+      if (n === 0 || n === 1) return 1;
+      let result = 1;
+      for (let i = 2; i <= n; i++) {
+        result *= i;
+      }
+      return result;
+    }
+
+    function addToHistory(expression, result) {
+      calculationHistory.push({ expression, result });
+      
+      if (calculationHistory.length > MAX_HISTORY_ITEMS) {
+        calculationHistory.shift();
+      }
+      
+      updateHistoryDisplay();
+    }
+
+    function updateHistoryDisplay() {
+      const historyDiv = document.getElementById('history');
+      historyDiv.innerHTML = '';
+      
+      calculationHistory.slice().reverse().forEach(item => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+          <div style="color: #7f8c8d; font-size: 0.9em;">${item.expression}</div>
+          <div style="font-weight: bold;">= ${item.result}</div>
+        `;
+        
+        historyItem.addEventListener('click', () => {
+          currentInput = item.result.toString();
+          updateDisplay();
+        });
+        
+        historyDiv.appendChild(historyItem);
+      });
+    }
+
+    function clearHistory() {
+      calculationHistory = [];
+      updateHistoryDisplay();
+    }
+
+    function copyResult() {
+      const display = document.getElementById('display');
+      navigator.clipboard.writeText(display.value)
+        .then(() => {
+          const originalText = display.value;
+          display.value = 'Kopyalandı!';
+          setTimeout(() => {
+            display.value = originalText;
+          }, 1000);
+        })
+        .catch(() => showError('Kopyalama başarısız'));
+    }
+
+    function showError(message) {
+      const display = document.getElementById('display');
+      const originalValue = display.value;
+      display.value = message;
+      setTimeout(() => {
+        display.value = originalValue;
+        if (!originalValue) clearDisplay();
+      }, 1000);
+    }
+
+    // Klavye desteği
+    document.addEventListener('keydown', function(e) {
+      const key = e.key;
+      
+      if (/[0-9+\-*/().]/.test(key)) {
+        appendValue(key);
+      } else if (key === 'Enter') {
+        calculate();
+      } else if (key === 'Backspace') {
+        backspace();
+      } else if (key === 'Escape' || key === 'Delete') {
+        clearDisplay();
+      } else if (key === '%') {
+        calculatePercentage();
+      } else if (key === '^') {
+        appendFunction('Math.pow(', ')', '^');
+      }
+    });
+  </script>
+</body>
+</html>
