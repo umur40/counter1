@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gelişmiş Sayaç Uygulaması</title>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2ecc71;
+      --danger-color: #e74c3c;
+      --dark-color: #2c3e50;
+      --light-color: #ecf0f1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .counter-container {
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--dark-color);
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .counter-display {
+      font-size: 72px;
+      font-weight: bold;
+      color: var(--dark-color);
+      margin: 30px 0;
+      padding: 20px;
+      background-color: var(--light-color);
+      border-radius: 15px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 25px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      min-width: 120px;
+    }
+
+    .increment { background-color: var(--primary-color); color: white; }
+    .decrement { background-color: var(--danger-color); color: white; }
+    .reset { background-color: var(--dark-color); color: white; }
+    .save { background-color: var(--secondary-color); color: white; }
+    .clear-history { background-color: var(--danger-color); color: white; width: 100%; }
+
+    button:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+    button:active { transform: translateY(0); }
+
+    .controls, .history {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: var(--light-color);
+      border-radius: 15px;
+    }
+
+    .control-group { margin-bottom: 15px; text-align: left; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark-color); }
+    input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+    input:focus { outline: none; border-color: var(--primary-color); }
+  </style>
+</head>
+<body>
+  <div class="counter-container">
+    <h1>Gelişmiş Sayaç Uygulaması</h1>
+    <div class="counter-display" id="counter">0</div>
+    <div class="buttons">
+      <button class="increment" id="increment">Artır (+)</button>
+      <button class="decrement" id="decrement">Azalt (-)</button>
+      <button class="reset" id="reset">Sıfırla</button>
+      <button class="save" id="save">Kaydet</button>
+    </div>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="step">Adım Değeri:</label>
+        <input type="number" id="step" value="1" min="1">
+      </div>
+      <div class="control-group">
+        <label for="max-value">Maksimum Değer (0 = sınırsız):</label>
+        <input type="number" id="max-value" value="0" min="0">
+      </div>
+      <div class="control-group">
+        <label for="min-value">Minimum Değer:</label>
+        <input type="number" id="min-value" value="0" min="-9999">
+      </div>
+    </div>
+
+    <div class="history">
+      <h3>Kayıt Geçmişi</h3>
+      <div id="history-list"></div>
+      <button class="clear-history" id="clear-history">Geçmişi Temizle</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const counterElement = document.getElementById('counter');
+      const incrementBtn = document.getElementById('increment');
+      const decrementBtn = document.getElementById('decrement');
+      const resetBtn = document.getElementById('reset');
+      const saveBtn = document.getElementById('save');
+      const clearHistoryBtn = document.getElementById('clear-history');
+      const stepInput = document.getElementById('step');
+      const maxValueInput = document.getElementById('max-value');
+      const minValueInput = document.getElementById('min-value');
+      let count = 0;
+
+      function updateCounter() {
+        counterElement.textContent = count;
+        counterElement.style.color = count > 0 ? '#2ecc71' : count < 0 ? '#e74c3c' : '#2c3e50';
+      }
+
+      incrementBtn.addEventListener('click', () => { count += parseInt(stepInput.value) || 1; updateCounter(); });
+      decrementBtn.addEventListener('click', () => { count -= parseInt(stepInput.value) || 1; updateCounter(); });
+      resetBtn.addEventListener('click', () => { count = 0; updateCounter(); });
+
+      updateCounter();
+    });
+  </script>
+</body>
+</html>
