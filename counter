@@ -12,7 +12,7 @@
       --dark-color: #2c3e50;
       --light-color: #ecf0f1;
     }
-
+// follow me
     * {
       box-sizing: border-box;
       margin: 0;
